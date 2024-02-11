@@ -11,7 +11,11 @@ class LinkedList:
         new_node = Node(value)
         self.head = new_node
         self.tail = new_node
-        self.length = 1
+
+        if value is None:
+            self.length = 0
+        else:
+            self.length = 1
 
     def append(self, value):
         new_node = Node(value)
@@ -54,6 +58,36 @@ class LinkedList:
             self.head = new_node
             self.length += 1
 
+    def popFirst(self):
+
+        if self.length == 0:
+            self.length = 0
+            return None
+        else:
+            poppedNode = self.head
+            if self.head.next is None:
+
+                self.tail = poppedNode.next
+
+            poppedNode = self.head
+
+            self.head = self.head.next
+            poppedNode.next = None
+
+            self.length -= 1
+
+            return poppedNode
+
+    def get(self, index):
+        if index < 0 or index >= self.length:
+            return None
+        else:
+            temp = self.head
+            for _ in range(index):
+                temp = temp.next
+
+            return temp
+
 
 my_linked_list = LinkedList(4)
 my_linked_list.append(5)
@@ -77,11 +111,15 @@ class LinkedListTests(unittest.TestCase):
     def test_init_emptylinked_list(self):
         new_linked_list = LinkedList(None)
 
-        self.assertEqual(new_linked_list.length, 1)
         self.assertEqual(new_linked_list.tail,new_linked_list.head)
 
-    def test_append_emptylinkedlist_thenupdateHeadAndTail(self):
+    def test_init_LinkedListWithNoneNodeLengthIsZero(self):
         new_linked_list = LinkedList(None)
+
+        self.assertEqual(new_linked_list.length, 0)
+
+    def test_append_emptylinkedlist_thenupdateHeadAndTail(self):
+        new_linked_list = self.createEmptyLinkedList()
         new_linked_list.append(4)
         self.assertEqual(new_linked_list.length, 1)
         self.assertEqual(new_linked_list.tail,new_linked_list.head)
@@ -107,14 +145,13 @@ class LinkedListTests(unittest.TestCase):
 
 # Pop Tests
     def test_pop_emptyLinkedListReturnsNothing(self):
-        new_linked_list = LinkedList(None)
+        new_linked_list = self.createEmptyLinkedList()
         nodePopped = new_linked_list.pop()
 
-        self.assertEqual(None, nodePopped.value)
-        self.assertEqual(None, nodePopped.next)
+        self.assertEqual(None, None)
 
     def test_pop_emptyLinkedListLengthOfListIs0(self):
-        new_linked_list = LinkedList(None)
+        new_linked_list = self.createEmptyLinkedList()
         new_linked_list.pop()
 
         self.assertEqual(0, new_linked_list.length)
@@ -133,10 +170,7 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(None, nodePopped.next)
 
     def test_pop_LinkedListWithMultipleNodesUpdatesTailAndLastNode(self):
-        new_linked_list = LinkedList(4)
-        new_linked_list.append(10)
-        new_linked_list.append(122)
-        new_linked_list.append(22)
+        new_linked_list = self.createLinkedListWithItems()
 
         self.assertEqual(22, new_linked_list.tail.value)
         self.assertEqual(None, new_linked_list.tail.next)
@@ -147,7 +181,7 @@ class LinkedListTests(unittest.TestCase):
 
  # Pepend Tests
     def test_prepend_LinkedListWithNoNodesPrependNode(self):
-        new_linked_list = LinkedList(None)
+        new_linked_list = self.createEmptyLinkedList()
 
         new_linked_list.prepend(4)
 
@@ -155,10 +189,7 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(new_linked_list.tail.value, 4)
 
     def test_prepend_NonEmptyLinkedListUpdatesHeadWithNewNode(self):
-        new_linked_list = LinkedList(4)
-        new_linked_list.append(10)
-        new_linked_list.append(122)
-        new_linked_list.append(22)
+        new_linked_list = self.createLinkedListWithItems()
 
         self.assertEqual(new_linked_list.head.value, 4)
 
@@ -167,6 +198,82 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(new_linked_list.head.value, 100)
         self.assertEqual(new_linked_list.head.next.value, 4)
         self.assertEqual(new_linked_list.length, 5)
+
+    # Pop First
+    def test_popFirst_OneItemOnLinkedListShouldReturnThatNodeAndListShouldBeEmpty(self):
+        new_linked_list = LinkedList(4)
+
+        popFirstNode = new_linked_list.popFirst()
+        self.assertEqual(new_linked_list.head, None)
+        self.assertEqual(new_linked_list.tail, None)
+
+        self.assertEqual(popFirstNode.value, 4)
+        self.assertEqual(new_linked_list.length, 0)
+
+    def test_popFirst_NoItemsOnLinkedListShouldReturnNone(self):
+        new_linked_list = self.createEmptyLinkedList()
+        self.assertEqual(new_linked_list.head.value, None)
+        self.assertEqual(new_linked_list.tail.value, None)
+
+        popFirstNode = new_linked_list.popFirst()
+        self.assertEqual(new_linked_list.head.value, None)
+        self.assertEqual(new_linked_list.tail.value, None)
+
+        self.assertEqual(popFirstNode, None)
+        self.assertEqual(new_linked_list.length, 0)
+
+    def test_popFirst_NonEmptyLinkedListShouldReturnFirstNode(self):
+        new_linked_list = self.createLinkedListWithItems()
+
+        popFirstNode = new_linked_list.popFirst()
+
+        self.assertEqual(new_linked_list.head.value, 10)
+        self.assertEqual(new_linked_list.head.next.value, 122)
+
+        self.assertEqual(popFirstNode.value, 4)
+        self.assertEqual(new_linked_list.length, 3)
+
+    def test_popFirst_NonEmptyListPoppedNodeShouldNotReferenceLinkedList(self):
+        new_linked_list = self.createLinkedListWithItems()
+
+        popFirstNode = new_linked_list.popFirst()
+
+        self.assertEqual(popFirstNode.value, 4)
+        self.assertEqual(popFirstNode.next, None)
+
+    # Get Tests
+    def test_get_EmptyLinkedListShouldReturnNone(self):
+        new_linked_list = self.createEmptyLinkedList()
+
+        getNode = new_linked_list.get(0)
+
+        self.assertEqual(getNode, None)
+
+    def test_get_IndexOutOfBoundsEmptyLinkedListShouldReturnNone(self):
+        new_linked_list = self.createEmptyLinkedList()
+
+        getNode = new_linked_list.get(100)
+
+        self.assertEqual(getNode, None)
+
+    def test_get_NonEmptyLinkedlistShouldReturnNone(self):
+        new_linked_list = self.createLinkedListWithItems()
+
+        getNode = new_linked_list.get(2)
+
+        self.assertEqual(getNode.value, 122)
+        self.assertEqual(getNode.next.value, 22)
+
+    # Helpers
+    def createLinkedListWithItems(self):
+        new_linked_list = LinkedList(4)
+        new_linked_list.append(10)
+        new_linked_list.append(122)
+        new_linked_list.append(22)
+        return new_linked_list
+
+    def createEmptyLinkedList(self):
+        return LinkedList(None)
 
 if __name__ == '__main__':
     unittest.main()
