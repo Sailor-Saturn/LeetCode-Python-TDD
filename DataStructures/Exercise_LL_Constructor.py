@@ -88,6 +88,11 @@ class LinkedList:
 
             return temp
 
+    def set(self, index, new_value):
+        tmp = self.get(index)
+        if tmp is not None:
+            tmp.value = new_value
+
 
 my_linked_list = LinkedList(4)
 my_linked_list.append(5)
@@ -106,6 +111,15 @@ print('Length:', my_linked_list.length)
 """
 
 import unittest
+
+
+def create_linked_list_with_items():
+    new_linked_list = LinkedList(4)
+    new_linked_list.append(10)
+    new_linked_list.append(122)
+    new_linked_list.append(22)
+    return new_linked_list
+
 
 class LinkedListTests(unittest.TestCase):
     def test_init_emptylinked_list(self):
@@ -170,7 +184,7 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(None, nodePopped.next)
 
     def test_pop_LinkedListWithMultipleNodesUpdatesTailAndLastNode(self):
-        new_linked_list = self.createLinkedListWithItems()
+        new_linked_list = create_linked_list_with_items()
 
         self.assertEqual(22, new_linked_list.tail.value)
         self.assertEqual(None, new_linked_list.tail.next)
@@ -189,7 +203,7 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(new_linked_list.tail.value, 4)
 
     def test_prepend_NonEmptyLinkedListUpdatesHeadWithNewNode(self):
-        new_linked_list = self.createLinkedListWithItems()
+        new_linked_list = create_linked_list_with_items()
 
         self.assertEqual(new_linked_list.head.value, 4)
 
@@ -223,7 +237,7 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(new_linked_list.length, 0)
 
     def test_popFirst_NonEmptyLinkedListShouldReturnFirstNode(self):
-        new_linked_list = self.createLinkedListWithItems()
+        new_linked_list = create_linked_list_with_items()
 
         popFirstNode = new_linked_list.popFirst()
 
@@ -234,7 +248,7 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(new_linked_list.length, 3)
 
     def test_popFirst_NonEmptyListPoppedNodeShouldNotReferenceLinkedList(self):
-        new_linked_list = self.createLinkedListWithItems()
+        new_linked_list = create_linked_list_with_items()
 
         popFirstNode = new_linked_list.popFirst()
 
@@ -257,23 +271,44 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(getNode, None)
 
     def test_get_NonEmptyLinkedlistShouldReturnNone(self):
-        new_linked_list = self.createLinkedListWithItems()
+        new_linked_list = create_linked_list_with_items()
 
         getNode = new_linked_list.get(2)
 
         self.assertEqual(getNode.value, 122)
         self.assertEqual(getNode.next.value, 22)
 
+    def test_set_IndexOutOfBoundsLinkedListShouldNotChangeAnything(self):
+        new_linked_list = create_linked_list_with_items()
+
+        expected_linked_list = create_linked_list_with_items()
+
+        new_linked_list.set(10, 15000)
+
+        self.checkIfTwoLinkedListsAreEqual(expected_linked_list, new_linked_list)
+
+    def test_set_NonEmptyLinkedListWithValidIndexShouldSubstituteValue(self):
+        new_linked_list = create_linked_list_with_items()
+
+        new_linked_list.set(2, 1500)
+
+        self.assertEqual(new_linked_list.get(2).value, 1500)
+
     # Helpers
-    def createLinkedListWithItems(self):
-        new_linked_list = LinkedList(4)
-        new_linked_list.append(10)
-        new_linked_list.append(122)
-        new_linked_list.append(22)
-        return new_linked_list
 
     def createEmptyLinkedList(self):
         return LinkedList(None)
+
+    def checkIfTwoLinkedListsAreEqual(self, expected_linked_list, received_linked_list):
+        expected_node = expected_linked_list.head
+        received_node = received_linked_list.head
+
+        while expected_node is not None and received_node is not None:
+            self.assertEqual(expected_node.value, received_node.value,
+                             "Check if the node is identical for the same index")
+
+            expected_node = expected_node.next
+            received_node = received_node.next
 
 if __name__ == '__main__':
     unittest.main()
