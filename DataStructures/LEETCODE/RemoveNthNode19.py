@@ -8,35 +8,35 @@ class ListNode(object):
 
 
 
+
+
 class Solution(object):
+    def find_length(self, head):
+        current_value = head
+        length = 0
+        if head is None:
+            return current_value
+        current_value = head
+        while current_value is not None:
+            length += 1
+            current_value = current_value.next
+
+        return length
     def removeNthFromEnd(self, head, n):
-        newList = ListNode(head.val, head.next)
-        previousNode = newList
-        currentNode = newList
-        nextNode = currentNode.next
-        while nextNode is not None:
-            if n == 0:
-                if nextNode.next is None:
-                    previousNode.next = None
-                    currentNode.next = None
+        length = self.find_length(head)
+        numberOfIterations = length - n - 1
+        i = 0
+        if numberOfIterations == -1:
+            return head.next
 
-                else:
-                    tmp = nextNode.next
-                    currentNode.next = tmp
-                    nextNode.next = None
-                nextNode = None
-            else:
-                previousNode = currentNode
-                currentNode = nextNode
-                if nextNode.next is not None:
-                    nextNode = currentNode.next
+        current_node = head
+        while i < numberOfIterations:
+            current_node = current_node.next
+            i += 1
 
-            n -= 1
+        current_node.next = current_node.next.next
+        return head
 
-        if n > 0:
-            return None
-        else:
-            return newList
 
 import unittest
 class RemoveNthNode19(unittest.TestCase):
@@ -74,7 +74,7 @@ class RemoveNthNode19(unittest.TestCase):
         assertedValue = result
         self.assertEqual(2, assertedValue.val)
         assertedValue = assertedValue.next
-        self.assertEqual(None, assertedValue.val)
+        self.assertEqual(None, assertedValue)
 
 
 
