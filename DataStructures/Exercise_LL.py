@@ -93,6 +93,18 @@ class LinkedList:
         if tmp is not None:
             tmp.value = new_value
 
+    def insert(self, index, new_value):
+        if index == 0 :
+            self.prepend(new_value)
+        elif index == self.length:
+            self.append(new_value)
+        elif index > 0 and index <= self.length:
+            tmp = self.get(index-1)
+            new_node = Node(new_value)
+            new_node.next = tmp.next
+            tmp.next = new_node
+            self.length += 1
+
 
 my_linked_list = LinkedList(4)
 my_linked_list.append(5)
@@ -133,7 +145,7 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(new_linked_list.length, 0)
 
     def test_append_emptylinkedlist_thenupdateHeadAndTail(self):
-        new_linked_list = self.createEmptyLinkedList()
+        new_linked_list = self.create_empty_linked_list()
         new_linked_list.append(4)
         self.assertEqual(new_linked_list.length, 1)
         self.assertEqual(new_linked_list.tail,new_linked_list.head)
@@ -157,15 +169,15 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(new_linked_list.tail.value, 2)
         self.assertEqual(new_linked_list.tail.next, None)
 
-# Pop Tests
+    # Pop Tests
     def test_pop_emptyLinkedListReturnsNothing(self):
-        new_linked_list = self.createEmptyLinkedList()
+        new_linked_list = self.create_empty_linked_list()
         nodePopped = new_linked_list.pop()
 
         self.assertEqual(None, None)
 
     def test_pop_emptyLinkedListLengthOfListIs0(self):
-        new_linked_list = self.createEmptyLinkedList()
+        new_linked_list = self.create_empty_linked_list()
         new_linked_list.pop()
 
         self.assertEqual(0, new_linked_list.length)
@@ -193,9 +205,9 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(122, new_linked_list.tail.value)
         self.assertEqual(None, new_linked_list.tail.next)
 
- # Pepend Tests
+    # Pre pend Tests
     def test_prepend_LinkedListWithNoNodesPrependNode(self):
-        new_linked_list = self.createEmptyLinkedList()
+        new_linked_list = self.create_empty_linked_list()
 
         new_linked_list.prepend(4)
 
@@ -225,7 +237,7 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(new_linked_list.length, 0)
 
     def test_popFirst_NoItemsOnLinkedListShouldReturnNone(self):
-        new_linked_list = self.createEmptyLinkedList()
+        new_linked_list = self.create_empty_linked_list()
         self.assertEqual(new_linked_list.head.value, None)
         self.assertEqual(new_linked_list.tail.value, None)
 
@@ -257,14 +269,14 @@ class LinkedListTests(unittest.TestCase):
 
     # Get Tests
     def test_get_EmptyLinkedListShouldReturnNone(self):
-        new_linked_list = self.createEmptyLinkedList()
+        new_linked_list = self.create_empty_linked_list()
 
         getNode = new_linked_list.get(0)
 
         self.assertEqual(getNode, None)
 
     def test_get_IndexOutOfBoundsEmptyLinkedListShouldReturnNone(self):
-        new_linked_list = self.createEmptyLinkedList()
+        new_linked_list = self.create_empty_linked_list()
 
         getNode = new_linked_list.get(100)
 
@@ -294,9 +306,46 @@ class LinkedListTests(unittest.TestCase):
 
         self.assertEqual(new_linked_list.get(2).value, 1500)
 
+    # Insert Tests
+    def test_insert_AtIndexZero_OnEmptyLinkedList_ShouldInsertElement(self):
+        new_linked_list = self.create_empty_linked_list()
+
+        new_linked_list.insert(0, 1)
+
+        self.assertEqual(new_linked_list.head.value, 1)
+
+    def test_insert_NotFirstIndex_OnEmptyLinkedList_ShouldNotInsertElement(self):
+        new_linked_list = self.create_empty_linked_list()
+
+        new_linked_list.insert(1, 1)
+
+        self.assertEqual(new_linked_list.get(1), None)
+
+    def test_insert_NotFirstIndex_OnNonEmptyLinkedList_ShouldInsertElement(self):
+        new_linked_list = LinkedList(5)
+
+        new_linked_list.insert(1, 1)
+
+        self.assertEqual(new_linked_list.get(1).value, 1)
+
+    def test_insert_FirstIndex_OnNonEmptyLinkedList_ShouldInsertElement(self):
+        new_linked_list = LinkedList(5)
+
+        new_linked_list.insert(0, 1)
+
+        self.assertEqual(new_linked_list.get(0).value, 1)
+        self.assertEqual(new_linked_list.get(0).next.value, 5)
+
+    def test_insert_AtNegativeIndex_OnEmptyLinkedList_ShouldNotInsertElement(self):
+        new_linked_list = self.create_empty_linked_list()
+
+        new_linked_list.insert(-1, 1)
+
+        self.assertEqual(new_linked_list.get(-1), None)
+
     # Helpers
 
-    def createEmptyLinkedList(self):
+    def create_empty_linked_list(self):
         return LinkedList(None)
 
     def checkIfTwoLinkedListsAreEqual(self, expected_linked_list, received_linked_list):
