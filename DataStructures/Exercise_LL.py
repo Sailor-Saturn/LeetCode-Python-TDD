@@ -112,15 +112,15 @@ class LinkedList:
             return self.popFirst()
         elif index == self.length - 1:
             return self.pop()
-        elif 0 < index <= self.length:
-            previous_node = self.get(index - 1)
-            node_to_be_removed = previous_node.next
-            next_node = node_to_be_removed.next
-            previous_node.next = next_node
 
-            node_to_be_removed.next = None
-            self.length -= 1
-            return node_to_be_removed
+        previous_node = self.get(index - 1)
+        node_to_be_removed = previous_node.next
+        next_node = node_to_be_removed.next
+        previous_node.next = next_node
+
+        node_to_be_removed.next = None
+        self.length -= 1
+        return node_to_be_removed
 
 
 
