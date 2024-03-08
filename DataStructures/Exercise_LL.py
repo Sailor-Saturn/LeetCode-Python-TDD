@@ -105,6 +105,23 @@ class LinkedList:
             tmp.next = new_node
             self.length += 1
 
+    def remove(self, index):
+        if index < 0 or index >= self.length:
+            return None
+        elif index == 0:
+            return self.popFirst()
+        elif index == self.length - 1:
+            return self.pop()
+        elif 0 < index <= self.length:
+            previous_node = self.get(index - 1)
+            next_node = self.get(index + 1)
+            previous_node.next = next_node
+            node_to_be_removed = self.get(index)
+            node_to_be_removed.next = None
+            self.length -= 1
+            return node_to_be_removed
+
+
 
 my_linked_list = LinkedList(4)
 my_linked_list.append(5)
@@ -342,6 +359,62 @@ class LinkedListTests(unittest.TestCase):
         new_linked_list.insert(-1, 1)
 
         self.assertEqual(new_linked_list.get(-1), None)
+
+
+    def test_remove_AtNegativeIndex_OnEmptyLinkedList_ShouldNotRemoveElement(self):
+        new_linked_list = self.create_empty_linked_list()
+
+        self.assertEqual(new_linked_list.length, 0)
+
+        new_linked_list.remove(-1)
+
+        self.assertEqual(new_linked_list.length, 0)
+
+    def test_remove_AtNegativeIndex_OnLinkedListWithItems_ShouldNotRemoveElement(self):
+        new_linked_list = create_linked_list_with_items()
+
+        self.assertEqual(new_linked_list.length, 4)
+
+        new_linked_list.remove(-1)
+
+        self.assertEqual(new_linked_list.length, 4)
+
+    def test_remove_AtIndexBiggerThanLength_OnLinkedListWithItems_ShouldNotRemoveElement(self):
+        new_linked_list = create_linked_list_with_items()
+
+        self.assertEqual(new_linked_list.length, 4)
+
+        new_linked_list.remove(5)
+
+        self.assertEqual(new_linked_list.length, 4)
+
+    def test_remove_AtIndex_OnLinkedListWithItems_ShouldRemoveElement(self):
+        new_linked_list = create_linked_list_with_items()
+
+        self.assertEqual(new_linked_list.length, 4)
+
+        new_linked_list.remove(1)
+
+        self.assertEqual(new_linked_list.length, 3)
+
+    def test_remove_AtFirstIndex_OnLinkedListWithItems_ShouldRemoveElement(self):
+        new_linked_list = create_linked_list_with_items()
+
+        self.assertEqual(new_linked_list.length, 4)
+
+        new_linked_list.remove(0)
+
+        self.assertEqual(new_linked_list.length, 3)
+
+    def test_remove_AtLastIndex_OnLinkedListWithItems_ShouldRemoveElement(self):
+        new_linked_list = create_linked_list_with_items()
+
+        self.assertEqual(new_linked_list.length, 4)
+
+        removedNode = new_linked_list.remove(3)
+
+        self.assertEqual(new_linked_list.length, 3)
+        self.assertEqual(removedNode.value, 22)
 
     # Helpers
 
