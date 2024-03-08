@@ -114,9 +114,10 @@ class LinkedList:
             return self.pop()
         elif 0 < index <= self.length:
             previous_node = self.get(index - 1)
-            next_node = self.get(index + 1)
+            node_to_be_removed = previous_node.next
+            next_node = node_to_be_removed.next
             previous_node.next = next_node
-            node_to_be_removed = self.get(index)
+
             node_to_be_removed.next = None
             self.length -= 1
             return node_to_be_removed
@@ -393,18 +394,20 @@ class LinkedListTests(unittest.TestCase):
 
         self.assertEqual(new_linked_list.length, 4)
 
-        new_linked_list.remove(1)
+        removedNode = new_linked_list.remove(1)
 
         self.assertEqual(new_linked_list.length, 3)
+        self.assertEqual(removedNode.value, 10)
 
     def test_remove_AtFirstIndex_OnLinkedListWithItems_ShouldRemoveElement(self):
         new_linked_list = create_linked_list_with_items()
 
         self.assertEqual(new_linked_list.length, 4)
 
-        new_linked_list.remove(0)
+        removedNode = new_linked_list.remove(0)
 
         self.assertEqual(new_linked_list.length, 3)
+        self.assertEqual(removedNode.value, 4)
 
     def test_remove_AtLastIndex_OnLinkedListWithItems_ShouldRemoveElement(self):
         new_linked_list = create_linked_list_with_items()
